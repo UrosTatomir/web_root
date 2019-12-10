@@ -16,9 +16,11 @@ class CreateEmployeesTable extends Migration
         Schema::create('employees', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name');
-            $table->string('email')->unique(); 
-            $table->date('start_date');
-            $table->date('due_date');
+            $table->string('email')->unique();
+            $table->string('password');  
+            // $table->date('start_date');
+            // $table->date('due_date');
+            $table->rememberToken(); 
             $table->timestamps();
         });
     }
@@ -31,5 +33,7 @@ class CreateEmployeesTable extends Migration
     public function down()
     {
         Schema::dropIfExists('employees');
+        // $table->dropColumn('password');
+        // $table->dropColumn('rememberToken');
     }
 }
