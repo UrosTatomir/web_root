@@ -7,6 +7,8 @@ use App\Http\Controllers\Controller;
 use App\User; 
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Support\Facades\Auth; 
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 // use Validator;
 use Illuminate\Support\Facades\Validator;
 class ApiAuthController extends Controller
@@ -18,18 +20,20 @@ $validator=Validator::make($request->all(),
            [
             'name'=>['required', 'string', 'max:255'],
             'email'=>['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password'=>['required', 'string', 'min:8','confirmed']
-            // 'confirm_password'=>['required', 'string', 'min:8']
+            'password'=>['required', 'string', 'min:8','confirmed'],
            ]);
+   // dd('stiglo');
+
 if($validator->fails()){
    return response()->json(['error'=>$validator->errors()],401);
 }else{
-   $input=$request->all();
-   $input['password']=bcrypt($input['password']);
-   // $user=User::create($input);
-   $user = Auth::User();
-   $success['token']=$user->createToken('AppName')->accessToken;
-   dd($success['token']);
+   
+   return User::forceCreate([
+      'name' => $request['name'],
+      'email' => $request['email'],
+      'password' => Hash::make($request['password']),
+      'remember_token' => Str::random(80),
+  ]);
    return response()->json(['success'=>$success],$this->successStatus);
   }
 }
